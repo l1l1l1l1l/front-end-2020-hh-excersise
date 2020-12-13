@@ -1,35 +1,42 @@
 import React, { useState } from 'react';
-
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-
+import DateFnsUtils from '@date-io/date-fns';
+import { DateTimePicker } from "@material-ui/pickers";
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import Grid from '@material-ui/core/Grid';
 
 function AddTraining(props) {
-    const [training, setTraining] = useState (
-        { id: '', date: '', duration: '', activity: '', customer: ''})
-
+    const [training, setTraining] = useState({ date: '', duration: '', activity: '', customer: props.params.value})
     const [open, setOpen] = useState(false);
+    const [date, setDate] = useState(new Date());
 
-    const handleClickOpen = () => {
-        setOpen(true);
-      };
-     
-      const handleClose = () => {
-        setOpen(false);
-      };
+
+    const inputChanged = (event) => {
+        setTraining({ ...training, [event.target.name]: event.target.value });
+    }
+
+    const handleChange = (date) => {
+        setDate(date);
+        setTraining({ ...training, date: date })
+    };
 
     const handleSave = () => {
         props.addTraining(training);
         handleClose();
     }
 
-    const inputChanged = (event) => {
-        setTraining({ ...training, [event.target.name]: event.target.value })
-    }
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     return (
         <div>
@@ -39,29 +46,23 @@ function AddTraining(props) {
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
                 <DialogTitle id="form-dialog-title">New training</DialogTitle>
                 <DialogContent>
-
-                <TextField
-                        margin="dense"
-                        name="id"
-                        value={training.id}
-                        onChange={inputChanged}
-                        label="ID"
-                        fullWidth
-                    />
-                    <TextField
-                        margin="dense"
-                        name="date"
-                        value={training.date}
-                        onChange={inputChanged}
-                        label="Date"
-                        fullWidth
-                    />
+                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                        <Grid container justify='space-around'>
+                            <DateTimePicker
+                                variant="inline"
+                                name="date"
+                                value={date}
+                                format="MM/dd/yyyy HH:mm"
+                                onChange={handleChange}
+                            />
+                        </Grid>
+                    </MuiPickersUtilsProvider>
                     <TextField
                         margin="dense"
                         name="duration"
                         value={training.duration}
                         onChange={inputChanged}
-                        label="Duration"
+                        label="duration"
                         fullWidth
                     />
                     <TextField
@@ -69,27 +70,21 @@ function AddTraining(props) {
                         name="activity"
                         value={training.activity}
                         onChange={inputChanged}
-                        label="Activity"
+                        label="activity"
                         fullWidth
                     />
-                    <TextField
-                        margin="dense"
-                        name="customer"
-                        value={training.customer}
-                        onChange={inputChanged}
-                        label="Customer"
-                        fullWidth
-                    />
-                 </DialogContent>
-              <DialogActions>
-                  <Button onClick={handleClose} color="primary">
-                   Cancel
+
+
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} color="primary">
+                        Cancel
                   </Button>
-                  <Button onClick={handleSave} color="primary">
-                 Save
+                    <Button onClick={handleSave} color="primary">
+                        Save
                 </Button>
-               </DialogActions>
-              </Dialog>
+                </DialogActions>
+            </Dialog>
         </div>
     )
 }

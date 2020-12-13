@@ -6,8 +6,6 @@ import 'ag-grid-community/dist/styles/ag-theme-material.css'
 import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import moment from 'moment';
-import AddTraining from './AddTraining'
-import EditTraining from './EditTraining';
 
 const Traininglist = () => {
     const [trainings, setTrainings] = useState([]);
@@ -28,7 +26,7 @@ const Traininglist = () => {
 
     const deleteTraining = (link) => {
         if (window.confirm('Are you sure?')) {
-            fetch(link, {
+            fetch('https://customerrest.herokuapp.com/api/trainings/' + link.data.id, {
                 method: 'DELETE'
             })
                 .then(_ => gridRef.current.refreshCells({ rowNodes: getTrainings() }))
@@ -38,56 +36,34 @@ const Traininglist = () => {
         }
     }
 
-    const addTraining = (newTraining) => {
-        fetch('https://customerrest.herokuapp.com/gettrainings', {
-            method: 'POST',
-            headers: { 'Content-type': 'application/json' },
-            body: JSON.stringify(newTraining)
-        })
-            .then(_ => gridRef.current.refreshCells({ rowNodes: getTrainings() }))
-            .catch(err => console.error(err))
-    }
-
-    const updateTraining = (link, training) => {
-        fetch(link, {
-            method: 'PUT',
-            headers: { 'Content-type': 'application/json' },
-            body: JSON.stringify(training)
-        })
-            .then(_ => gridRef.current.refreshCells({ rowNodes: getTrainings() }))
-            .then(_ => setMsg('Training was updated succesfully'))
-            .then(_ => setOpen(true))
-            .catch(err => console.error(err))
-    }
-
     const closeSnackbar = () => {
         setOpen(false);
     }
 
     const columns = [
-        { headerName: 'ID', field: 'id', sortable: true, filter: true, },
+        { 
+            headerName: 'Date', 
+            field: 'date', 
+            sortable: true, 
+            filter: true,
+            cellRenderer: (data) => { return moment(data.value).format("MM/DD/YYYY HH:mm");}
+        },
         { headerName: 'Duration', field: 'duration', sortable: true, filter: true },
         { headerName: 'Activity', field: 'activity', sortable: true, filter: true },
         { headerName: 'Customer', field: 'customer.firstname', sortable: true, filter: true },
         {
             headerName: '',
-            field: 'links[0].href',
-            width: 100,
-            cellRendererFramework: params => <EditTraining updateTraining={updateTraining} params={params} />
-        },
-        {
-            headerName: '',
-            field: 'links[0].href',
-            width: 100,
+            field: 'id',
+            width: 90,
             cellRendererFramework: params =>
-                <Button color="secondary" size="small" onClick={() => deleteTraining(params.value)}>Delete</Button>
+                <Button color="secondary" size="small" onClick={() => deleteTraining(params)}>Delete</Button>
         }
     ]
 
     return (
         <div>
-            <AddTraining addTraining={addTraining} />
-            <div className="ag-theme-material" style={{ height: '700px', width: '60%', margin: 'auto' }}>
+            <br></br>
+            <div className="ag-theme-material" style={{ height: '700px', width: '70%', margin: 'auto' }}>
                 <AgGridReact
                     suppressCellSelection={true}
                     ref={gridRef}
