@@ -30,10 +30,10 @@ function TrainingCalendar() {
     return (
         <div>
             <Calendar
+                localizer={localizer}
                 events={session}
                 startAccessor="start"
                 endAccessor="end"
-                localizer={localizer}
                 style={{ height: '800px', width: '90%', margin: 'auto' }}
             />
         </div>
