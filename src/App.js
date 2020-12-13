@@ -17,7 +17,7 @@ function App() {
   return (
     <div className="App">
       <AppBar position="static" style={{ background: '#1E90FF' }}>
-        <Tabs value={value} onChange={handleChange} inkBarStyle={{background: '#1E90FF'}}>
+        <Tabs value={value} onChange={handleChange} TabIndicatorProps={{style: {background:'#ff7b00'}}}>
           <Tab value="customers" label="Customers" />
           <Tab value="trainings" label="Trainings" />
           <Tab value="calendar" label="Calendar" />

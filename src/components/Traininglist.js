@@ -63,7 +63,7 @@ const Traininglist = () => {
     return (
         <div>
             <br></br>
-            <div className="ag-theme-material" style={{ height: '700px', width: '70%', margin: 'auto' }}>
+            <div className="ag-theme-material" style={{ height: '630px', width: '50%', margin: 'auto' }}>
                 <AgGridReact
                     suppressCellSelection={true}
                     ref={gridRef}
