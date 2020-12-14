@@ -1,27 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, momentLocalizer } from "react-big-calendar";
-import moment from 'moment';
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import moment from 'moment';
 
 function TrainingCalendar() {
     const localizer = momentLocalizer(moment);
     const [session, setSession] = useState([]);
 
     const getData = () => {
-        fetch('https://customerrest.herokuapp.com/gettrainings')
-            .then(response => response.json())
-            .then(trainings => {
-                return setSession(
-                    trainings.map((training, i) => ({
-                        id: i,
-                        title: training.activity + " / " + training.customer.firstname + " " + training.customer.lastname + " / " + moment(training.date).format("HH:mm"),
-                        start: moment(training.date)._d,
-                        end: moment(training.date).add(training.duration, 'minutes')._d
-                    }))
-                )
-            })
-            .catch(err => console.log(err));
-    }
+        fetch("https://customerrest.herokuapp.com/gettrainings")
+          .then((response) => response.json())
+          .then((data) => {
+            let sessionArray = []
+            for (let i = 0; i < data.length; i++) {
+              sessionArray.push({
+                title: data[i].activity,
+                start: new Date(data[i].date),
+                end: moment(data[i].date).add(data[i].duration, "min").toDate(),
+              })
+              setSession(sessionArray)
+            }
+          })
+          .catch((err) => console.error(err))
+      }
 
     useEffect(() => {
         getData();
